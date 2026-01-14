@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h2>Clientes</h2>
+
+<a href="{% url 'cliente_novo' %}" class="btn btn-primary mb-3">
+    Novo Cliente
+</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.telefone }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>
+                <a href="{% url 'cliente_editar' cliente.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'cliente_excluir' cliente.id %}" class="btn btn-sm btn-danger">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhum cliente cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
