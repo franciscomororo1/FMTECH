@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h4 class="mb-3">Equipamentos</h4>
+
+<a href="{% url 'equipamento_novo' %}" class="btn btn-primary mb-3">
+    Novo Equipamento
+</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Equipamento</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for equipamento in equipamentos %}
+        <tr>
+            <td>{{ equipamento.cliente.nome }}</td>
+            <td>{{ equipamento.get_tipo_display }}</td>
+            <td>{{ equipamento.marca }} {{ equipamento.modelo }}</td>
+            <td>
+                <a href="{% url 'equipamento_editar' equipamento.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'equipamento_excluir' equipamento.id %}" class="btn btn-sm btn-danger">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
