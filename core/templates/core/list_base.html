@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- 🔹 Cabeçalho da lista -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">{{ titulo }}</h2>
+
+        {% if botao_url %}
+        <a href="{{ botao_url }}" class="btn btn-primary">
+            {{ botao_label }}
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- 🔹 Card com tabela -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        {% block table_header %}{% endblock %}
+                    </thead>
+                    <tbody>
+                        {% block table_body %}{% endblock %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

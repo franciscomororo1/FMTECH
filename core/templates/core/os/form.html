@@ -1,70 +1,48 @@
-{% extends "core/base.html" %}
+{% extends "core/form_base.html" %}
 
-{% load static %}
+{% block form_title %}
+Ordem de Serviço
+{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Ordem de Serviço</h5>
-        </div>
+{% block form_fields %}
 
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Equipamento</label>
-                        {{ form.equipamento }}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Técnico</label>
-                        {{ form.tecnico }}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Status</label>
-                        {{ form.status }}
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Defeito relatado</label>
-                    {{ form.defeito_relatado }}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Diagnóstico</label>
-                    {{ form.diagnostico }}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Solução</label>
-                    {{ form.solucao }}
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Valor do serviço</label>
-                        {{ form.valor_servico }}
-                    </div>
-                </div>
-
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success">
-                        Salvar
-                    </button>
-                    <a href="{% url 'os_lista' %}" class="btn btn-secondary">
-                        Cancelar
-                    </a>
-                </div>
-
-            </form>
-        </div>
-    </div>
+<div class="col-md-6">
+    <label class="form-label">Equipamento</label>
+    {{ form.equipamento }}
 </div>
+
+<div class="col-md-6">
+    <label class="form-label">Técnico</label>
+    {{ form.tecnico }}
+</div>
+
+<div class="col-md-4">
+    <label class="form-label">Status</label>
+    {{ form.status }}
+</div>
+
+<div class="col-12">
+    <label class="form-label">Defeito relatado</label>
+    {{ form.defeito_relatado }}
+</div>
+
+<div class="col-12">
+    <label class="form-label">Diagnóstico</label>
+    {{ form.diagnostico }}
+</div>
+
+<div class="col-12">
+    <label class="form-label">Solução</label>
+    {{ form.solucao }}
+</div>
+
+<div class="col-md-4">
+    <label class="form-label">Valor do serviço</label>
+    {{ form.valor_servico }}
+</div>
+
+{% endblock %}
+
+{% block cancel_url %}
+{% url 'os_lista' %}
 {% endblock %}

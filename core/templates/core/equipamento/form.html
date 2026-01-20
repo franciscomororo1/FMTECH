@@ -1,57 +1,43 @@
-{% extends "core/base.html" %}
+{% extends "core/form_base.html" %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
+{% block form_title %}
+Cadastro de Equipamento
+{% endblock %}
 
-            <h4 class="mb-4">Equipamento</h4>
+{% block form_fields %}
 
-            <form method="post">
-                {% csrf_token %}
-
-                <div class="row g-3">
-
-                    <div class="col-md-6">
-                        <label class="form-label">Cliente</label>
-                        {{ form.cliente }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo</label>
-                        {{ form.tipo }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Marca</label>
-                        {{ form.marca }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Modelo</label>
-                        {{ form.modelo }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Número de Série</label>
-                        {{ form.numero_serie }}
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Descrição</label>
-                        {{ form.descricao }}
-                    </div>
-
-                </div>
-
-                <div class="d-flex justify-content-end mt-4 gap-2">
-                    <a href="{% url 'equipamento_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
+<div class="col-md-6">
+    <label class="form-label">Cliente</label>
+    {{ form.cliente }}
 </div>
+
+<div class="col-md-6">
+    <label class="form-label">Tipo</label>
+    {{ form.tipo }}
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Marca</label>
+    {{ form.marca }}
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Modelo</label>
+    {{ form.modelo }}
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Número de Série</label>
+    {{ form.numero_serie }}
+</div>
+
+<div class="col-12">
+    <label class="form-label">Descrição</label>
+    {{ form.descricao }}
+</div>
+
+{% endblock %}
+
+{% block cancel_url %}
+{% url 'equipamento_lista' %}
 {% endblock %}

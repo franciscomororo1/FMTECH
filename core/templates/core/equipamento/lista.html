@@ -1,33 +1,38 @@
-{% extends "core/base.html" %}
+{% extends "core/list_base.html" %}
 
-{% block content %}
-<h4 class="mb-3">Equipamentos</h4>
+{% block table_header %}
+<tr>
+    <th>Cliente</th>
+    <th>Tipo</th>
+    <th>Marca</th>
+    <th>Modelo</th>
+    <th class="text-end">Ações</th>
+</tr>
+{% endblock %}
 
-<a href="{% url 'equipamento_novo' %}" class="btn btn-primary mb-3">
-    Novo Equipamento
-</a>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Cliente</th>
-            <th>Tipo</th>
-            <th>Equipamento</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for equipamento in equipamentos %}
-        <tr>
-            <td>{{ equipamento.cliente.nome }}</td>
-            <td>{{ equipamento.get_tipo_display }}</td>
-            <td>{{ equipamento.marca }} {{ equipamento.modelo }}</td>
-            <td>
-                <a href="{% url 'equipamento_editar' equipamento.id %}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{% url 'equipamento_excluir' equipamento.id %}" class="btn btn-sm btn-danger">Excluir</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block table_body %}
+{% for equipamento in equipamentos %}
+<tr>
+    <td>{{ equipamento.cliente.nome }}</td>
+    <td>{{ equipamento.get_tipo_display }}</td>
+    <td>{{ equipamento.marca }}</td>
+    <td>{{ equipamento.modelo }}</td>
+    <td class="text-end">
+        <a href="{% url 'equipamento_editar' equipamento.pk %}"
+           class="btn btn-sm btn-outline-primary">
+            Editar
+        </a>
+        <a href="{% url 'equipamento_excluir' equipamento.pk %}"
+           class="btn btn-sm btn-outline-danger">
+            Excluir
+        </a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">
+        Nenhum equipamento cadastrado.
+    </td>
+</tr>
+{% endfor %}
 {% endblock %}
