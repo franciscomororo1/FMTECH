@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Cliente, Equipamento, OrdemServico
-from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm
 from django.contrib import messages
 from django.urls import reverse
+from django.utils import timezone
 
+from .models import Cliente, Equipamento, OrdemServico, Receita
+from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm, ReceitaForm
 
 
 # =========================
@@ -17,6 +18,7 @@ def cliente_lista(request):
         'botao_label': '+ Novo Cliente',
         'botao_url': reverse('cliente_novo'),
     })
+
 
 def cliente_novo(request):
     form = ClienteForm(request.POST or None)
@@ -58,14 +60,13 @@ def cliente_excluir(request, pk):
 def equipamento_lista(request):
     equipamentos = Equipamento.objects.select_related('cliente').all()
 
-    context = {
+    return render(request, 'core/equipamento/lista.html', {
         'equipamentos': equipamentos,
         'titulo': 'Equipamentos',
-        'botao_url': '/equipamentos/novo/',
         'botao_label': '+ Novo Equipamento',
-    }
+        'botao_url': reverse('equipamento_novo'),
+    })
 
-    return render(request, 'core/equipamento/lista.html', context)
 
 def equipamento_novo(request):
     form = EquipamentoForm(request.POST or None)
@@ -125,7 +126,10 @@ def os_nova(request):
         os.status = 'AB'
         os.save()
 
-        messages.success(request, f'Ordem de Serviço {os.numero_os} criada com sucesso!')
+        messages.success(
+            request,
+            f'Ordem de Serviço {os.numero_os} criada com sucesso!'
+        )
         return redirect('os_lista')
 
     return render(request, 'core/os/form.html', {'form': form})
@@ -137,10 +141,16 @@ def os_editar(request, pk):
 
     if form.is_valid():
         form.save()
-        messages.success(request, f'Ordem de Serviço {os.numero_os} atualizada!')
+        messages.success(
+            request,
+            f'Ordem de Serviço {os.numero_os} atualizada!'
+        )
         return redirect('os_lista')
 
-    return render(request, 'core/os/form.html', {'form': form, 'os': os})
+    return render(request, 'core/os/form.html', {
+        'form': form,
+        'os': os
+    })
 
 
 def os_excluir(request, pk):
@@ -149,7 +159,87 @@ def os_excluir(request, pk):
     if request.method == 'POST':
         numero = os.numero_os
         os.delete()
-        messages.success(request, f'Ordem de Serviço {numero} excluída!')
+        messages.success(
+            request,
+            f'Ordem de Serviço {numero} excluída!'
+        )
         return redirect('os_lista')
 
     return render(request, 'core/os/excluir.html', {'os': os})
+
+
+# =========================
+# DASHBOARD
+# =========================
+def dashboard(request):
+    os_abertas = OrdemServico.objects.filter(status='AB').count()
+    os_andamento = OrdemServico.objects.filter(status='AN').count()
+    os_concluidas = OrdemServico.objects.filter(status='CO').count()
+
+    return render(request, 'core/dashboard.html', {
+        'os_abertas': os_abertas,
+        'os_andamento': os_andamento,
+        'os_concluidas': os_concluidas,
+    })
+
+# =========================
+# RECEITAS
+# =========================
+
+# =========================
+# RECEITAS
+# =========================
+
+def receita_lista(request):
+    receitas = Receita.objects.select_related(
+        'ordem_servico'
+    ).order_by('-data_recebimento')
+
+    return render(request, 'core/receita/lista.html', {
+        'receitas': receitas,
+        'titulo': 'Receitas',
+        'botao_label': '+ Nova Receita',
+        'botao_url': 'receita_nova',
+    })
+
+
+def receita_nova(request):
+    form = ReceitaForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Receita cadastrada com sucesso!')
+        return redirect('receita_lista')
+
+    return render(request, 'core/receita/form.html', {
+        'form': form,
+        'titulo': 'Nova Receita'
+    })
+
+
+def receita_editar(request, pk):
+    receita = get_object_or_404(Receita, pk=pk)
+    form = ReceitaForm(request.POST or None, instance=receita)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Receita atualizada com sucesso!')
+        return redirect('receita_lista')
+
+    return render(request, 'core/receita/form.html', {
+        'form': form,
+        'titulo': 'Editar Receita'
+    })
+
+
+def receita_excluir(request, pk):
+    receita = get_object_or_404(Receita, pk=pk)
+
+    if request.method == 'POST':
+        receita.delete()
+        messages.success(request, 'Receita excluída com sucesso!')
+        return redirect('receita_lista')
+
+    return render(request, 'core/receita/excluir.html', {
+        'receita': receita
+    })

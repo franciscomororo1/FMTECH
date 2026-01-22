@@ -1,0 +1,43 @@
+{% extends "core/form_base.html" %}
+
+{% block form_title %}
+Nova Receita
+{% endblock %}
+
+{% block form_fields %}
+
+<div class="col-md-6">
+    <label class="form-label">Ordem de Serviço</label>
+    {{ form.ordem_servico }}
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Descrição</label>
+    {{ form.descricao }}
+</div>
+
+<div class="col-md-4">
+    <label class="form-label">Valor</label>
+    {{ form.valor }}
+</div>
+
+<div class="col-md-4">
+    <label class="form-label">Data de Recebimento</label>
+    {{ form.data_recebimento }}
+</div>
+
+<div class="col-md-4">
+    <label class="form-label">Método de Pagamento</label>
+    {{ form.metodo_pagamento }}
+</div>
+
+<div class="col-md-6">
+    <label class="form-label">Status do Pagamento</label>
+    {{ form.status_pagamento }}
+</div>
+
+{% endblock %}
+
+{% block cancel_url %}
+{% url 'receita_lista' %}
+{% endblock %}

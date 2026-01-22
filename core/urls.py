@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import dashboard
 
 urlpatterns = [
     # CLIENTES
@@ -19,6 +20,16 @@ urlpatterns = [
     path('ordens/nova/', views.os_nova, name='os_nova'),
     path('ordens/<int:pk>/editar/', views.os_editar, name='os_editar'),
     path('ordens/<int:pk>/excluir/', views.os_excluir, name='os_excluir'),
+
+    # RECEITAS
+    path('receitas/', views.receita_lista, name='receita_lista'),
+    path('receitas/nova/', views.receita_nova, name='receita_nova'),
+    path('receitas/<int:pk>/editar/', views.receita_editar, name='receita_editar'),
+    path('receitas/<int:pk>/excluir/', views.receita_excluir, name='receita_excluir'),
+
+    # DASHBOARD
+    path('', dashboard, name='dashboard'),
+
 
 
 ]

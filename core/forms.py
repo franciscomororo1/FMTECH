@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cliente, Equipamento, OrdemServico
+from .models import Cliente, Equipamento, OrdemServico, Receita
 
 # ===============================
 # FORM BASE
@@ -59,3 +59,32 @@ class OrdemServicoForm(BaseBootstrapForm):
             'solucao',
             'valor_servico',
         ]
+
+# ===============================
+# FORM DE RECEITA
+# ===============================
+
+class ReceitaForm(BaseBootstrapForm):
+    class Meta:
+        model = Receita
+        fields = [
+            'ordem_servico',
+            'descricao',
+            'valor',
+            'data_recebimento',
+            'metodo_pagamento',
+            'status_pagamento',
+        ]
+
+        widgets = {
+            'ordem_servico': forms.Select(),
+            'descricao': forms.TextInput(),
+            'valor': forms.NumberInput(),
+            'data_recebimento': forms.DateInput(
+                attrs={
+                    'type': 'date'
+                }
+            ),
+            'metodo_pagamento': forms.TextInput(),
+            'status_pagamento': forms.TextInput(),
+        }

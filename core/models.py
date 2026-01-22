@@ -54,13 +54,21 @@ class Tecnico(models.Model):
 # MODEL DE ORDEM DE SERVIÇO
 
 class OrdemServico(models.Model):
+
+    STATUS_ABERTA = 'AB'
+    STATUS_ANDAMENTO = 'AN'
+    STATUS_AGUARDANDO = 'AP'
+    STATUS_CONCLUIDA = 'CO'
+    STATUS_CANCELADA = 'CA'
+
     STATUS_CHOICES = [
-        ('AB', 'Aberta'),
-        ('AN', 'Em andamento'),
-        ('AP', 'Aguardando peça'),
-        ('CO', 'Concluída'),
-        ('CA', 'Cancelada'),
+        (STATUS_ABERTA, 'Aberta'),
+        (STATUS_ANDAMENTO, 'Em andamento'),
+        (STATUS_AGUARDANDO, 'Aguardando peça'),
+        (STATUS_CONCLUIDA, 'Concluída'),
+        (STATUS_CANCELADA, 'Cancelada'),
     ]
+
 
     numero_os = models.CharField(
         'Número da OS',
@@ -96,11 +104,12 @@ class OrdemServico(models.Model):
     )
 
     status = models.CharField(
-        'Status',
-        max_length=2,
-        choices=STATUS_CHOICES,
-        default='AB'
-    )
+    'Status',
+    max_length=2,
+    choices=STATUS_CHOICES,
+    default=STATUS_ABERTA
+)
+
 
     defeito_relatado = models.TextField('Defeito relatado')
     diagnostico = models.TextField('Diagnóstico', blank=True)

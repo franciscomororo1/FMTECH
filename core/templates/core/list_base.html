@@ -8,10 +8,11 @@
         <h2 class="mb-0">{{ titulo }}</h2>
 
         {% if botao_url %}
-        <a href="{{ botao_url }}" class="btn btn-primary">
+        <a href="{% url botao_url %}" class="btn btn-primary">
             {{ botao_label }}
         </a>
         {% endif %}
+
     </div>
 
     <!-- 🔹 Card com tabela -->
