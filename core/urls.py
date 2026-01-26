@@ -28,7 +28,7 @@ urlpatterns = [
     path('receitas/<int:pk>/excluir/', views.receita_excluir, name='receita_excluir'),
 
     # DASHBOARD
-    path('', dashboard, name='dashboard'),
+    path('', views.dashboard, name='dashboard'),
 
 
 

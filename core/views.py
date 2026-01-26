@@ -2,6 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models import Sum
+from django.utils.timezone import now
+from datetime import date
 
 from .models import Cliente, Equipamento, OrdemServico, Receita
 from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm, ReceitaForm
@@ -16,7 +19,7 @@ def cliente_lista(request):
         'clientes': clientes,
         'titulo': 'Clientes',
         'botao_label': '+ Novo Cliente',
-        'botao_url': reverse('cliente_novo'),
+        'botao_url': 'cliente_novo',
     })
 
 
@@ -64,7 +67,7 @@ def equipamento_lista(request):
         'equipamentos': equipamentos,
         'titulo': 'Equipamentos',
         'botao_label': '+ Novo Equipamento',
-        'botao_url': reverse('equipamento_novo'),
+        'botao_url': 'equipamento_novo',
     })
 
 
@@ -114,7 +117,7 @@ def os_lista(request):
         'ordens': ordens,
         'titulo': 'Ordens de Serviço',
         'botao_label': '+ Nova OS',
-        'botao_url': reverse('os_nova'),
+        'botao_url': 'os_nova',
     })
 
 
@@ -172,16 +175,38 @@ def os_excluir(request, pk):
 # DASHBOARD
 # =========================
 def dashboard(request):
-    os_abertas = OrdemServico.objects.filter(status='AB').count()
-    os_andamento = OrdemServico.objects.filter(status='AN').count()
-    os_concluidas = OrdemServico.objects.filter(status='CO').count()
+    # Clientes
+    total_clientes = Cliente.objects.count()
+
+    # Ordens de Serviço
+    os_abertas = OrdemServico.objects.filter(
+        status=OrdemServico.STATUS_ABERTA
+    ).count()
+
+    os_concluidas = OrdemServico.objects.filter(
+        status=OrdemServico.STATUS_CONCLUIDA
+    ).count()
+
+    # Receitas do mês atual
+    hoje = date.today()
+    receitas_mes = Receita.objects.filter(
+        data_recebimento__year=hoje.year,
+        data_recebimento__month=hoje.month
+    ).aggregate(total=Sum('valor'))['total'] or 0
+
+    # Últimas OS
+    ultimas_os = OrdemServico.objects.select_related(
+        'equipamento',
+        'equipamento__cliente'
+    ).order_by('-data_abertura')[:5]
 
     return render(request, 'core/dashboard.html', {
+        'total_clientes': total_clientes,
         'os_abertas': os_abertas,
-        'os_andamento': os_andamento,
         'os_concluidas': os_concluidas,
+        'receitas_mes': receitas_mes,
+        'ultimas_os': ultimas_os,
     })
-
 # =========================
 # RECEITAS
 # =========================
