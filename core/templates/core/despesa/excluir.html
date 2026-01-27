@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <h3>Confirmar exclusão</h3>
+
+    <p>Deseja excluir a despesa <strong>{{ despesa.descricao }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger">Excluir</button>
+        <a href="{% url 'despesa_lista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+{% endblock %}

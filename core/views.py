@@ -6,8 +6,8 @@ from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import date
 
-from .models import Cliente, Equipamento, OrdemServico, Receita
-from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm, ReceitaForm
+from .models import Cliente, Equipamento, OrdemServico, Receita, Despesa
+from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm, ReceitaForm, DespesaForm
 
 
 # =========================
@@ -174,7 +174,10 @@ def os_excluir(request, pk):
 # =========================
 # DASHBOARD
 # =========================
+
 def dashboard(request):
+    hoje = date.today()
+
     # Clientes
     total_clientes = Cliente.objects.count()
 
@@ -187,12 +190,20 @@ def dashboard(request):
         status=OrdemServico.STATUS_CONCLUIDA
     ).count()
 
-    # Receitas do mês atual
-    hoje = date.today()
+    # Receita do mês
     receitas_mes = Receita.objects.filter(
         data_recebimento__year=hoje.year,
         data_recebimento__month=hoje.month
     ).aggregate(total=Sum('valor'))['total'] or 0
+
+    # Despesas do mês
+    despesas_mes = Despesa.objects.filter(
+        data_despesa__year=hoje.year,
+        data_despesa__month=hoje.month
+    ).aggregate(total=Sum('valor'))['total'] or 0
+
+    # Saldo
+    saldo_mes = receitas_mes - despesas_mes
 
     # Últimas OS
     ultimas_os = OrdemServico.objects.select_related(
@@ -200,16 +211,20 @@ def dashboard(request):
         'equipamento__cliente'
     ).order_by('-data_abertura')[:5]
 
+    # Últimas despesas
+    ultimas_despesas = Despesa.objects.order_by('-data_despesa')[:5]
+
     return render(request, 'core/dashboard.html', {
         'total_clientes': total_clientes,
         'os_abertas': os_abertas,
         'os_concluidas': os_concluidas,
         'receitas_mes': receitas_mes,
+        'despesas_mes': despesas_mes,
+        'saldo_mes': saldo_mes,
         'ultimas_os': ultimas_os,
+        'ultimas_despesas': ultimas_despesas,
     })
-# =========================
-# RECEITAS
-# =========================
+
 
 # =========================
 # RECEITAS
@@ -268,3 +283,49 @@ def receita_excluir(request, pk):
     return render(request, 'core/receita/excluir.html', {
         'receita': receita
     })
+
+# =========================
+# DESPESAS
+# =========================
+def despesa_lista(request):
+    despesas = Despesa.objects.order_by('-data_despesa')
+    return render(request, 'core/despesa/lista.html', {
+        'despesas': despesas,
+        'titulo': 'Despesas',
+        'botao_label': '+ Nova Despesa',
+        'botao_url': 'despesa_nova',
+    })
+
+
+def despesa_nova(request):
+    form = DespesaForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Despesa cadastrada com sucesso!')
+        return redirect('despesa_lista')
+
+    return render(request, 'core/despesa/form.html', {'form': form})
+
+
+def despesa_editar(request, pk):
+    despesa = get_object_or_404(Despesa, pk=pk)
+    form = DespesaForm(request.POST or None, instance=despesa)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Despesa atualizada com sucesso!')
+        return redirect('despesa_lista')
+
+    return render(request, 'core/despesa/form.html', {'form': form})
+
+
+def despesa_excluir(request, pk):
+    despesa = get_object_or_404(Despesa, pk=pk)
+
+    if request.method == 'POST':
+        despesa.delete()
+        messages.success(request, 'Despesa excluída!')
+        return redirect('despesa_lista')
+
+    return render(request, 'core/despesa/excluir.html', {'despesa': despesa})

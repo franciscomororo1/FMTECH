@@ -104,6 +104,19 @@ class ReceitaAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(Despesa)
 class DespesaAdmin(admin.ModelAdmin):
-    list_display = ('descricao', 'valor', 'data_pagamento', 'categoria')
-    list_filter = ('categoria',)
-    autocomplete_fields = ('ordem_servico',)
+    list_display = (
+        'descricao',
+        'valor',
+        'data_despesa',
+        'status',
+    )
+
+    list_filter = (
+        'status',
+        'data_despesa',
+    )
+
+    search_fields = (
+        'descricao',
+        'observacao',
+    )

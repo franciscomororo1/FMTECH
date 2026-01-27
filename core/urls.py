@@ -27,6 +27,13 @@ urlpatterns = [
     path('receitas/<int:pk>/editar/', views.receita_editar, name='receita_editar'),
     path('receitas/<int:pk>/excluir/', views.receita_excluir, name='receita_excluir'),
 
+    # Despesas
+    path('despesas/', views.despesa_lista, name='despesa_lista'),
+    path('despesas/nova/', views.despesa_nova, name='despesa_nova'),
+    path('despesas/<int:pk>/editar/', views.despesa_editar, name='despesa_editar'),
+    path('despesas/<int:pk>/excluir/', views.despesa_excluir, name='despesa_excluir'),
+
+
     # DASHBOARD
     path('', views.dashboard, name='dashboard'),
 

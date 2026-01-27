@@ -196,21 +196,36 @@ class Receita(models.Model):
 # MODEL FINANCEIRO (DESPESAS)
 
 class Despesa(models.Model):
-    ordem_servico = models.ForeignKey(
-        OrdemServico,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='despesas'
-    )
+
+    STATUS_PENDENTE = 'PE'
+    STATUS_PAGA = 'PA'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDENTE, 'Pendente'),
+        (STATUS_PAGA, 'Paga'),
+    ]
+
     descricao = models.CharField('Descrição', max_length=150)
-    valor = models.DecimalField('Valor', max_digits=10, decimal_places=2)
-    data_pagamento = models.DateField('Data de pagamento')
-    categoria = models.CharField('Categoria', max_length=50)
+
+    valor = models.DecimalField(
+        'Valor',
+        max_digits=10,
+        decimal_places=2
+    )
+
+    data_despesa = models.DateField(
+        'Data',
+        default=timezone.now
+    )
+
+    status = models.CharField(
+        'Status',
+        max_length=2,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDENTE
+    )
+
+    observacao = models.TextField('Observação', blank=True)
 
     def __str__(self):
         return self.descricao
-
-
-
-

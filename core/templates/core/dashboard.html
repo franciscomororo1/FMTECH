@@ -3,82 +3,161 @@
 {% block content %}
 <div class="container-fluid">
 
-    <h2 class="mb-4">Dashboard</h2>
+    <h2 class="mb-4 fw-semibold">Dashboard</h2>
 
     <!-- 🔹 KPIs -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-4">
 
-        <div class="col-md-3">
-            <div class="card shadow-sm text-center">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Clientes</h6>
-                    <h3>{{ total_clientes }}</h3>
+                    <small class="text-muted">Clientes</small>
+                    <h2 class="fw-bold">{{ total_clientes }}</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm text-center">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">OS Abertas</h6>
-                    <h3 class="text-warning">{{ os_abertas }}</h3>
+                    <small class="text-muted">OS Abertas</small>
+                    <h2 class="fw-bold text-warning">{{ os_abertas }}</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm text-center">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">OS Concluídas</h6>
-                    <h3 class="text-success">{{ os_concluidas }}</h3>
+                    <small class="text-muted">OS Concluídas</small>
+                    <h2 class="fw-bold text-success">{{ os_concluidas }}</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm text-center">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Receita do Mês</h6>
-                    <h3>R$ {{ receitas_mes|floatformat:2 }}</h3>
+                    <small class="text-muted">Receita do Mês</small>
+                    <h2 class="fw-bold text-success">
+                        R$ {{ receitas_mes|floatformat:2 }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+                <div class="card-body">
+                    <small class="text-muted">Despesas do Mês</small>
+                    <h2 class="fw-bold text-danger">
+                        R$ {{ despesas_mes|floatformat:2 }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+                <div class="card-body">
+                    <small class="text-muted">Saldo do Mês</small>
+                    <h2 class="fw-bold text-primary">
+                        R$ {{ saldo_mes|floatformat:2 }}
+                    </h2>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- 🔹 Últimas OS -->
-    <div class="card shadow-sm">
-        <div class="card-header">
-            Últimas Ordens de Serviço
+    <!-- 🔹 Tabelas -->
+    <div class="row g-4">
+
+        <!-- Últimas OS -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Últimas Ordens de Serviço</h6>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="small text-muted">
+                                <tr>
+                                    <th>OS</th>
+                                    <th>Cliente</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for os in ultimas_os %}
+                                <tr>
+                                    <td>{{ os.numero_os }}</td>
+                                    <td>{{ os.equipamento.cliente.nome }}</td>
+                                    <td>
+                                        <span class="badge
+                                            {% if os.status == 'AB' %}bg-warning
+                                            {% elif os.status == 'CO' %}bg-success
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ os.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ os.data_abertura|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        Nenhuma OS cadastrada
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        <div class="card-body p-0">
-            <table class="table mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>OS</th>
-                        <th>Cliente</th>
-                        <th>Status</th>
-                        <th>Data</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for os in ultimas_os %}
-                    <tr>
-                        <td>{{ os.numero_os }}</td>
-                        <td>{{ os.equipamento.cliente.nome }}</td>
-                        <td>{{ os.get_status_display }}</td>
-                        <td>{{ os.data_abertura|date:"d/m/Y" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            Nenhuma OS cadastrada
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+        <!-- Últimas Despesas -->
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">Últimas Despesas</h6>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="small text-muted">
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th class="text-end">Valor</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for despesa in ultimas_despesas %}
+                                <tr>
+                                    <td>{{ despesa.descricao }}</td>
+                                    <td class="text-end fw-semibold text-danger">
+                                        R$ {{ despesa.valor|floatformat:2 }}
+                                    </td>
+                                    <td>{{ despesa.data_despesa|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">
+                                        Nenhuma despesa cadastrada
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
         </div>
+
     </div>
 
 </div>

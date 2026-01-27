@@ -1,0 +1,36 @@
+{% extends "core/list_base.html" %}
+
+{% block table_header %}
+<tr>
+    <th>Descrição</th>
+    <th>Valor</th>
+    <th>Data</th>
+    <th>Status</th>
+    <th class="text-end">Ações</th>
+</tr>
+{% endblock %}
+
+{% block table_body %}
+{% for d in despesas %}
+<tr>
+    <td>{{ d.descricao }}</td>
+    <td>R$ {{ d.valor|floatformat:2 }}</td>
+    <td>{{ d.data_despesa|date:"d/m/Y" }}</td>
+    <td>{{ d.get_status_display }}</td>
+    <td class="text-end">
+        <a href="{% url 'despesa_editar' d.pk %}" class="btn btn-sm btn-outline-primary">
+            Editar
+        </a>
+        <a href="{% url 'despesa_excluir' d.pk %}" class="btn btn-sm btn-outline-danger">
+            Excluir
+        </a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">
+        Nenhuma despesa cadastrada
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
