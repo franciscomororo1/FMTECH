@@ -9,37 +9,37 @@
     <div class="row g-4 mb-4">
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">Clientes</small>
-                    <h2 class="fw-bold">{{ total_clientes }}</h2>
+                    <h2 class="fw-bold mb-0">{{ total_clientes }}</h2>
                 </div>
             </div>
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">OS Abertas</small>
-                    <h2 class="fw-bold text-warning">{{ os_abertas }}</h2>
+                    <h2 class="fw-bold mb-0 text-warning">{{ os_abertas }}</h2>
                 </div>
             </div>
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">OS Concluídas</small>
-                    <h2 class="fw-bold text-success">{{ os_concluidas }}</h2>
+                    <h2 class="fw-bold mb-0 text-success">{{ os_concluidas }}</h2>
                 </div>
             </div>
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">Receita do Mês</small>
-                    <h2 class="fw-bold text-success">
+                    <h2 class="fw-bold mb-0 text-success">
                         R$ {{ receitas_mes|floatformat:2 }}
                     </h2>
                 </div>
@@ -47,10 +47,10 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">Despesas do Mês</small>
-                    <h2 class="fw-bold text-danger">
+                    <h2 class="fw-bold mb-0 text-danger">
                         R$ {{ despesas_mes|floatformat:2 }}
                     </h2>
                 </div>
@@ -58,10 +58,11 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
                 <div class="card-body">
                     <small class="text-muted">Saldo do Mês</small>
-                    <h2 class="fw-bold text-primary">
+                    <h2 class="fw-bold mb-0
+                        {% if saldo_mes < 0 %}text-danger{% else %}text-primary{% endif %}">
                         R$ {{ saldo_mes|floatformat:2 }}
                     </h2>
                 </div>
@@ -98,6 +99,7 @@
                                         <span class="badge
                                             {% if os.status == 'AB' %}bg-warning
                                             {% elif os.status == 'CO' %}bg-success
+                                            {% elif os.status == 'AN' %}bg-primary
                                             {% else %}bg-secondary{% endif %}">
                                             {{ os.get_status_display }}
                                         </span>
@@ -162,3 +164,4 @@
 
 </div>
 {% endblock %}
+

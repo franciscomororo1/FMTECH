@@ -183,7 +183,11 @@ def dashboard(request):
 
     # Ordens de Serviço
     os_abertas = OrdemServico.objects.filter(
-        status=OrdemServico.STATUS_ABERTA
+    status__in=[
+        OrdemServico.STATUS_ABERTA,
+        OrdemServico.STATUS_ANDAMENTO,
+        OrdemServico.STATUS_AGUARDANDO,
+    ]
     ).count()
 
     os_concluidas = OrdemServico.objects.filter(

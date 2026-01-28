@@ -23,9 +23,10 @@ class Equipamento(models.Model):
         ('NB', 'Notebook'),
         ('IMP', 'Impressora'),
         ('MON', 'Monitor'),
+        ('TV', 'Televisão'),
         ('PER', 'Periférico'),
     ]
-
+    
     cliente = models.ForeignKey(
         Cliente,
         on_delete=models.CASCADE,
