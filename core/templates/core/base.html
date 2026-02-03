@@ -18,24 +18,16 @@
            TOPBAR
         ====================== */
         .topbar {
-            height: 120px; /* 🔥 mais espaço */
+            height: 120px;
             background-color: #212529;
             display: flex;
             align-items: center;
         }
 
-            .topbar {
-                height: 100px;            /* barra mais alta */
-                background-color: #212529;
-                display: flex;
-                align-items: center;
+        .topbar img {
+            height: 120px;
+            width: auto;
         }
-
-            .topbar img {
-                height: 120px;            /* logo GRANDE de verdade */
-                width: auto;
-        }
-
 
         /* =====================
            SIDEBAR
@@ -56,11 +48,6 @@
             color: #fff;
         }
 
-        .sidebar .nav-link.active {
-            background-color: #343a40;
-            color: #fff;
-        }
-
         /* =====================
            CONTEÚDO
         ====================== */
@@ -73,7 +60,7 @@
         ====================== */
         .dashboard-card {
             background-color: #ffffff;
-            border: 2px solid #dee2e6; /* borda bem visível */
+            border: 2px solid #dee2e6;
             border-radius: 16px;
             transition: all 0.25s ease;
             cursor: pointer;
@@ -86,42 +73,86 @@
         }
     </style>
 </head>
+
 <body>
 
 <!-- 🔝 TOPBAR -->
 <nav class="navbar topbar px-4">
-    <a href="/" class="d-flex align-items-center">
-        <img src="{% static 'core/img/logo-white.png' %}"
-             alt="FMTECH"
-             class="d-block">
-    </a>
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <!-- LOGO -->
+        <a href="{% url 'dashboard' %}" class="d-flex align-items-center">
+            <img src="{% static 'core/img/logo-white.png' %}" alt="FMTECH">
+        </a>
+
+        <!-- LOGIN / LOGOUT -->
+        <div class="d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+                <span class="text-light">
+                    👋 {{ user.username }}
+                </span>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        🚪 Sair
+                    </button>
+                </form>
+
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light">
+                    🔑 Entrar
+                </a>
+            {% endif %}
+        </div>
+    </div>
 </nav>
 
 <div class="container-fluid">
     <div class="row">
 
-        <!-- 📌 SIDEBAR -->
+        {% if user.is_authenticated %}
+        <!-- 📌 SLIDEBAR -->
         <nav class="col-12 col-md-2 sidebar p-3">
             <ul class="nav nav-pills flex-column gap-1">
+
                 <li class="nav-item mt-4">
-                    <hr class="text-secondary">
-
-                    <a href="{% url 'logout' %}" class="nav-link text-danger">
-                        🚪 Sair
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a href="{% url 'dashboard' %}" class="nav-link">
                         📊 Dashboard
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{% url 'cliente_lista' %}" class="nav-link">
+                    <a class="nav-link d-flex justify-content-between align-items-center"
+                        data-bs-toggle="collapse"
+                        href="#menuClientes"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="menuClientes">
+
                         👤 Clientes
+                        <span>▾</span>
                     </a>
+
+                    <div class="collapse ps-2" id="menuClientes">
+                        <ul class="nav flex-column mt-1">
+
+                            <li class="nav-item">
+                                <a href="{% url 'cliente_lista' %}" class="nav-link">
+                                    📋 Lista de Clientes
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{% url 'cliente_novo' %}" class="nav-link">
+                                    ➕ Novo Cliente
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
                 </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link d-flex justify-content-between align-items-center"
@@ -173,9 +204,21 @@
 
             </ul>
         </nav>
+        {% endif %}
 
         <!-- 📄 CONTEÚDO -->
-        <main class="col-12 col-md-10 content">
+        <main class="col content">
+            
+            <!-- 🔔 MENSAGENS -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             {% block content %}
             {% endblock %}
         </main>

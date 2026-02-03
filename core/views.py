@@ -1,19 +1,32 @@
+from datetime import date
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.urls import reverse
-from django.utils import timezone
+from django.urls import reverse_lazy
 from django.db.models import Sum
-from django.utils.timezone import now
-from datetime import date
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 
-from .models import Cliente, Equipamento, OrdemServico, Receita, Despesa
-from .forms import ClienteForm, EquipamentoForm, OrdemServicoForm, ReceitaForm, DespesaForm
-
+from .models import (
+    Cliente,
+    Equipamento,
+    OrdemServico,
+    Receita,
+    Despesa,
+)
+from .forms import (
+    ClienteForm,
+    EquipamentoForm,
+    OrdemServicoForm,
+    ReceitaForm,
+    DespesaForm,
+)
 
 # =========================
 # CLIENTE
 # =========================
+
+@login_required
 def cliente_lista(request):
     clientes = Cliente.objects.all().order_by('nome')
     return render(request, 'core/cliente/lista.html', {
@@ -24,6 +37,7 @@ def cliente_lista(request):
     })
 
 
+@login_required
 def cliente_novo(request):
     form = ClienteForm(request.POST or None)
 
@@ -35,6 +49,7 @@ def cliente_novo(request):
     return render(request, 'core/cliente/form.html', {'form': form})
 
 
+@login_required
 def cliente_editar(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
     form = ClienteForm(request.POST or None, instance=cliente)
@@ -47,6 +62,7 @@ def cliente_editar(request, pk):
     return render(request, 'core/cliente/form.html', {'form': form})
 
 
+@login_required
 def cliente_excluir(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
 
@@ -61,6 +77,8 @@ def cliente_excluir(request, pk):
 # =========================
 # EQUIPAMENTO
 # =========================
+
+@login_required
 def equipamento_lista(request):
     equipamentos = Equipamento.objects.select_related('cliente').all()
 
@@ -72,6 +90,7 @@ def equipamento_lista(request):
     })
 
 
+@login_required
 def equipamento_novo(request):
     form = EquipamentoForm(request.POST or None)
 
@@ -83,6 +102,7 @@ def equipamento_novo(request):
     return render(request, 'core/equipamento/form.html', {'form': form})
 
 
+@login_required
 def equipamento_editar(request, pk):
     equipamento = get_object_or_404(Equipamento, pk=pk)
     form = EquipamentoForm(request.POST or None, instance=equipamento)
@@ -95,6 +115,7 @@ def equipamento_editar(request, pk):
     return render(request, 'core/equipamento/form.html', {'form': form})
 
 
+@login_required
 def equipamento_excluir(request, pk):
     equipamento = get_object_or_404(Equipamento, pk=pk)
 
@@ -109,9 +130,12 @@ def equipamento_excluir(request, pk):
 # =========================
 # ORDEM DE SERVIÇO
 # =========================
+
+@login_required
 def os_lista(request):
     ordens = OrdemServico.objects.select_related(
-        'equipamento', 'tecnico'
+        'equipamento',
+        'tecnico'
     ).order_by('-data_abertura')
 
     return render(request, 'core/os/lista.html', {
@@ -122,12 +146,13 @@ def os_lista(request):
     })
 
 
+@login_required
 def os_nova(request):
     form = OrdemServicoForm(request.POST or None)
 
     if form.is_valid():
         os = form.save(commit=False)
-        os.status = 'AB'
+        os.status = OrdemServico.STATUS_ABERTA
         os.save()
 
         messages.success(
@@ -139,6 +164,7 @@ def os_nova(request):
     return render(request, 'core/os/form.html', {'form': form})
 
 
+@login_required
 def os_editar(request, pk):
     os = get_object_or_404(OrdemServico, pk=pk)
     form = OrdemServicoForm(request.POST or None, instance=os)
@@ -157,6 +183,7 @@ def os_editar(request, pk):
     })
 
 
+@login_required
 def os_excluir(request, pk):
     os = get_object_or_404(OrdemServico, pk=pk)
 
@@ -176,48 +203,41 @@ def os_excluir(request, pk):
 # DASHBOARD
 # =========================
 
-#@login_required
+@login_required
 def dashboard(request):
     hoje = date.today()
 
-    # Clientes
     total_clientes = Cliente.objects.count()
 
-    # Ordens de Serviço
     os_abertas = OrdemServico.objects.filter(
-    status__in=[
-        OrdemServico.STATUS_ABERTA,
-        OrdemServico.STATUS_ANDAMENTO,
-        OrdemServico.STATUS_AGUARDANDO,
-    ]
+        status__in=[
+            OrdemServico.STATUS_ABERTA,
+            OrdemServico.STATUS_ANDAMENTO,
+            OrdemServico.STATUS_AGUARDANDO,
+        ]
     ).count()
 
     os_concluidas = OrdemServico.objects.filter(
         status=OrdemServico.STATUS_CONCLUIDA
     ).count()
 
-    # Receita do mês
     receitas_mes = Receita.objects.filter(
         data_recebimento__year=hoje.year,
         data_recebimento__month=hoje.month
     ).aggregate(total=Sum('valor'))['total'] or 0
 
-    # Despesas do mês
     despesas_mes = Despesa.objects.filter(
         data_despesa__year=hoje.year,
         data_despesa__month=hoje.month
     ).aggregate(total=Sum('valor'))['total'] or 0
 
-    # Saldo
     saldo_mes = receitas_mes - despesas_mes
 
-    # Últimas OS
     ultimas_os = OrdemServico.objects.select_related(
         'equipamento',
         'equipamento__cliente'
     ).order_by('-data_abertura')[:5]
 
-    # Últimas despesas
     ultimas_despesas = Despesa.objects.order_by('-data_despesa')[:5]
 
     return render(request, 'core/dashboard.html', {
@@ -236,6 +256,7 @@ def dashboard(request):
 # RECEITAS
 # =========================
 
+@login_required
 def receita_lista(request):
     receitas = Receita.objects.select_related(
         'ordem_servico'
@@ -249,6 +270,7 @@ def receita_lista(request):
     })
 
 
+@login_required
 def receita_nova(request):
     form = ReceitaForm(request.POST or None)
 
@@ -263,6 +285,7 @@ def receita_nova(request):
     })
 
 
+@login_required
 def receita_editar(request, pk):
     receita = get_object_or_404(Receita, pk=pk)
     form = ReceitaForm(request.POST or None, instance=receita)
@@ -278,6 +301,7 @@ def receita_editar(request, pk):
     })
 
 
+@login_required
 def receita_excluir(request, pk):
     receita = get_object_or_404(Receita, pk=pk)
 
@@ -290,11 +314,15 @@ def receita_excluir(request, pk):
         'receita': receita
     })
 
+
 # =========================
 # DESPESAS
 # =========================
+
+@login_required
 def despesa_lista(request):
     despesas = Despesa.objects.order_by('-data_despesa')
+
     return render(request, 'core/despesa/lista.html', {
         'despesas': despesas,
         'titulo': 'Despesas',
@@ -303,6 +331,7 @@ def despesa_lista(request):
     })
 
 
+@login_required
 def despesa_nova(request):
     form = DespesaForm(request.POST or None)
 
@@ -314,6 +343,7 @@ def despesa_nova(request):
     return render(request, 'core/despesa/form.html', {'form': form})
 
 
+@login_required
 def despesa_editar(request, pk):
     despesa = get_object_or_404(Despesa, pk=pk)
     form = DespesaForm(request.POST or None, instance=despesa)
@@ -326,6 +356,7 @@ def despesa_editar(request, pk):
     return render(request, 'core/despesa/form.html', {'form': form})
 
 
+@login_required
 def despesa_excluir(request, pk):
     despesa = get_object_or_404(Despesa, pk=pk)
 
@@ -335,3 +366,13 @@ def despesa_excluir(request, pk):
         return redirect('despesa_lista')
 
     return render(request, 'core/despesa/excluir.html', {'despesa': despesa})
+
+
+# =========================
+# LOGIN
+# =========================
+
+class CustomLoginView(LoginView):
+    template_name = 'core/registration/login.html'
+    redirect_authenticated_user = True
+    next_page = reverse_lazy('dashboard')

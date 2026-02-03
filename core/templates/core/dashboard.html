@@ -1,167 +1,152 @@
 {% extends "core/base.html" %}
 
 {% block content %}
+
+<style>
+.dashboard-card {
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+</style>
+
 <div class="container-fluid">
 
-    <h2 class="mb-4 fw-semibold">Dashboard</h2>
+    <!-- TÍTULO -->
+    <div class="mb-4">
+        <h3 class="fw-bold text-primary">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h3>
+        <small class="text-muted">Resumo do sistema</small>
+    </div>
 
-    <!-- 🔹 KPIs -->
+    <!-- CARDS PRINCIPAIS -->
     <div class="row g-4 mb-4">
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">Clientes</small>
-                    <h2 class="fw-bold mb-0">{{ total_clientes }}</h2>
+        <!-- CLIENTES -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100 border-primary">
+                <div class="card-body d-flex flex-column justify-content-between">
+
+                    <div>
+                        <small class="text-muted text-uppercase">Total de Clientes</small>
+                        <h2 class="fw-bold text-primary">{{ total_clientes }}</h2>
+                    </div>
+
+                    <a href="{% url 'cliente_lista' %}"
+                       class="btn btn-outline-primary btn-sm mt-3 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-eye"></i>
+                        Ver Clientes
+                    </a>
+
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">OS Abertas</small>
-                    <h2 class="fw-bold mb-0 text-warning">{{ os_abertas }}</h2>
+        <!-- ORDENS -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100 border-warning">
+                <div class="card-body d-flex flex-column justify-content-between">
+
+                    <div>
+                        <small class="text-muted text-uppercase">Ordens Abertas</small>
+                        <h2 class="fw-bold text-warning">{{ os_abertas }}</h2>
+                    </div>
+
+                    <a href="{% url 'os_lista' %}"
+                       class="btn btn-outline-warning btn-sm mt-3 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-eye"></i>
+                        Ver Ordens
+                    </a>
+
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">OS Concluídas</small>
-                    <h2 class="fw-bold mb-0 text-success">{{ os_concluidas }}</h2>
+        <!-- RECEITAS -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100 border-success">
+                <div class="card-body d-flex flex-column justify-content-between">
+
+                    <div>
+                        <small class="text-muted text-uppercase">Recebimentos (Mês)</small>
+                        <h2 class="fw-bold text-success">
+                            R$ {{ receitas_mes|floatformat:2 }}
+                        </h2>
+                    </div>
+
+                    <a href="{% url 'receita_lista' %}"
+                       class="btn btn-outline-success btn-sm mt-3 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-eye"></i>
+                        Ver Receitas
+                    </a>
+
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">Receita do Mês</small>
-                    <h2 class="fw-bold mb-0 text-success">
-                        R$ {{ receitas_mes|floatformat:2 }}
-                    </h2>
-                </div>
-            </div>
-        </div>
+        <!-- DESPESAS -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100 border-danger">
+                <div class="card-body d-flex flex-column justify-content-between">
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">Despesas do Mês</small>
-                    <h2 class="fw-bold mb-0 text-danger">
-                        R$ {{ despesas_mes|floatformat:2 }}
-                    </h2>
-                </div>
-            </div>
-        </div>
+                    <div>
+                        <small class="text-muted text-uppercase">Gastos (Mês)</small>
+                        <h2 class="fw-bold text-danger">
+                            R$ {{ despesas_mes|floatformat:2 }}
+                        </h2>
+                    </div>
 
-        <div class="col-6 col-md-3">
-            <div class="card dashboard-card border-0 shadow-sm rounded-4 h-100 text-center">
-                <div class="card-body">
-                    <small class="text-muted">Saldo do Mês</small>
-                    <h2 class="fw-bold mb-0
-                        {% if saldo_mes < 0 %}text-danger{% else %}text-primary{% endif %}">
-                        R$ {{ saldo_mes|floatformat:2 }}
-                    </h2>
+                    <a href="{% url 'despesa_lista' %}"
+                       class="btn btn-outline-danger btn-sm mt-3 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-eye"></i>
+                        Ver Gastos
+                    </a>
+
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- 🔹 Tabelas -->
-    <div class="row g-4">
-
-        <!-- Últimas OS -->
-        <div class="col-12 col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <h6 class="fw-semibold mb-3">Últimas Ordens de Serviço</h6>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="small text-muted">
-                                <tr>
-                                    <th>OS</th>
-                                    <th>Cliente</th>
-                                    <th>Status</th>
-                                    <th>Data</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for os in ultimas_os %}
-                                <tr>
-                                    <td>{{ os.numero_os }}</td>
-                                    <td>{{ os.equipamento.cliente.nome }}</td>
-                                    <td>
-                                        <span class="badge
-                                            {% if os.status == 'AB' %}bg-warning
-                                            {% elif os.status == 'CO' %}bg-success
-                                            {% elif os.status == 'AN' %}bg-primary
-                                            {% else %}bg-secondary{% endif %}">
-                                            {{ os.get_status_display }}
-                                        </span>
-                                    </td>
-                                    <td>{{ os.data_abertura|date:"d/m/Y" }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">
-                                        Nenhuma OS cadastrada
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
+    <!-- RESUMO FINANCEIRO -->
+    <div class="card shadow-sm">
+        <div class="card-header fw-bold">
+            Resumo Financeiro do Mês
         </div>
 
-        <!-- Últimas Despesas -->
-        <div class="col-12 col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <h6 class="fw-semibold mb-3">Últimas Despesas</h6>
+        <div class="card-body">
+            <div class="row text-center">
 
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead class="small text-muted">
-                                <tr>
-                                    <th>Descrição</th>
-                                    <th class="text-end">Valor</th>
-                                    <th>Data</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for despesa in ultimas_despesas %}
-                                <tr>
-                                    <td>{{ despesa.descricao }}</td>
-                                    <td class="text-end fw-semibold text-danger">
-                                        R$ {{ despesa.valor|floatformat:2 }}
-                                    </td>
-                                    <td>{{ despesa.data_despesa|date:"d/m/Y" }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted">
-                                        Nenhuma despesa cadastrada
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
+                <div class="col-md-4">
+                    <small class="text-muted">Receitas</small>
+                    <h4 class="text-success">
+                        R$ {{ receitas_mes|floatformat:2 }}
+                    </h4>
                 </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted">Despesas</small>
+                    <h4 class="text-danger">
+                        R$ {{ despesas_mes|floatformat:2 }}
+                    </h4>
+                </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted">Saldo do Mês</small>
+                    <h4 class="{% if saldo_mes >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        R$ {{ saldo_mes|floatformat:2 }}
+                    </h4>
+                </div>
+
             </div>
         </div>
-
     </div>
 
 </div>
-{% endblock %}
 
+{% endblock %}
