@@ -20,6 +20,8 @@ from .forms import (
     OrdemServicoForm,
     ReceitaForm,
     DespesaForm,
+    ClienteInlineForm,
+    EquipamentoInlineForm,
 )
 
 # =========================
@@ -146,22 +148,104 @@ def os_lista(request):
     })
 
 
+
 @login_required
 def os_nova(request):
-    form = OrdemServicoForm(request.POST or None)
 
-    if form.is_valid():
-        os = form.save(commit=False)
-        os.status = OrdemServico.STATUS_ABERTA
-        os.save()
+    if request.method == 'POST':
+        form = OrdemServicoForm(request.POST)
 
-        messages.success(
-            request,
-            f'Ordem de Serviço {os.numero_os} criada com sucesso!'
-        )
-        return redirect('os_lista')
+        if form.is_valid():
 
-    return render(request, 'core/os/form.html', {'form': form})
+            # ===============================
+            # CLIENTE
+            # ===============================
+            cliente = form.cleaned_data.get('cliente')
+
+            if not cliente:
+                nome = form.cleaned_data.get('cliente_nome')
+
+                if nome:
+                    cliente = Cliente.objects.create(
+                        nome=nome,
+                        cpf_cnpj=form.cleaned_data.get('cliente_cpf_cnpj'),
+                        telefone=form.cleaned_data.get('cliente_telefone'),
+                        email=form.cleaned_data.get('cliente_email'),
+                        endereco=form.cleaned_data.get('cliente_endereco'),
+                    )
+                else:
+                    form.add_error(
+                        'cliente',
+                        'Selecione ou cadastre um cliente.'
+                    )
+                    return render(
+                        request,
+                        'core/os/form.html',
+                        {'form': form}
+                    )
+
+            # ===============================
+            # EQUIPAMENTO
+            # ===============================
+            equipamento = form.cleaned_data.get(
+                'equipamento_existente'
+            )
+
+            if not equipamento:
+                tipo = form.cleaned_data.get('tipo')
+
+                if tipo:
+                    equipamento = Equipamento.objects.create(
+                        cliente=cliente,
+                        tipo=tipo,
+                        marca=form.cleaned_data.get('marca'),
+                        modelo=form.cleaned_data.get('modelo'),
+                        numero_serie=form.cleaned_data.get('numero_serie'),
+                        descricao=form.cleaned_data.get('descricao'),
+                    )
+                else:
+                    form.add_error(
+                        'equipamento_existente',
+                        'Selecione ou cadastre um equipamento.'
+                    )
+                    return render(
+                        request,
+                        'core/os/form.html',
+                        {'form': form}
+                    )
+
+            # ===============================
+            # SALVA OS
+            # ===============================
+            os = form.save(commit=False)
+            os.equipamento = equipamento
+            os.save()
+
+            # ===============================
+            # REDIRECIONA PRA LISTA
+            # ===============================
+            return redirect('os_lista')
+
+    else:
+        form = OrdemServicoForm()
+
+    return render(
+        request,
+        'core/os/form.html',
+        {'form': form}
+    )
+  
+
+@login_required
+def os_print(request, pk):
+
+    os = OrdemServico.objects.get(pk=pk)
+
+    return render(
+        request,
+        'core/os/print.html',
+        {'os': os}
+    )
 
 
 @login_required

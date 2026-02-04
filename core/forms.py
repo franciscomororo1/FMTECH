@@ -45,9 +45,72 @@ class EquipamentoForm(BaseBootstrapForm):
 
 
 # ===============================
-# FORM DE ORDEM DE SERVIÇO
+# FORM DE ORDEM DE SERVIÇO COMPLETO
 # ===============================
+
 class OrdemServicoForm(BaseBootstrapForm):
+    
+    # ===============================
+    # EQUIPAMENTO
+    # ===============================
+    
+    equipamento = forms.ModelChoiceField(
+        queryset=Equipamento.objects.all(),
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
+
+    # ===============================
+    # CLIENTE EXISTENTE
+    # ===============================
+    cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(),
+        required=False,
+        label='Cliente existente',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    # ===============================
+    # NOVO CLIENTE
+    # ===============================
+    cliente_nome = forms.CharField(required=False, label='Nome')
+    cliente_cpf_cnpj = forms.CharField(required=False, label='CPF/CNPJ')
+    cliente_telefone = forms.CharField(required=False, label='Telefone')
+    cliente_email = forms.EmailField(required=False, label='Email')
+    cliente_endereco = forms.CharField(required=False, label='Endereço')
+
+    # ===============================
+    # EQUIPAMENTO EXISTENTE
+    # ===============================
+    equipamento_existente = forms.ModelChoiceField(
+        queryset=Equipamento.objects.all(),
+        required=False,
+        label='Equipamento existente',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    # ===============================
+    # NOVO EQUIPAMENTO
+    # ===============================
+    tipo = forms.ChoiceField(
+        choices=Equipamento.TIPO_CHOICES,
+        required=False,
+        label='Tipo'
+    )
+
+    marca = forms.CharField(required=False)
+    modelo = forms.CharField(required=False)
+    numero_serie = forms.CharField(required=False)
+
+    descricao = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 3})
+    )
+
+    # ===============================
+    # META
+    # ===============================
     class Meta:
         model = OrdemServico
         fields = [
@@ -59,6 +122,7 @@ class OrdemServicoForm(BaseBootstrapForm):
             'solucao',
             'valor_servico',
         ]
+
 
 # ===============================
 # FORM DE RECEITA
@@ -113,3 +177,35 @@ class DespesaForm(BaseBootstrapForm):
             'status': forms.Select(),
             'observacao': forms.Textarea(attrs={'rows': 3}),
         }
+
+# ===============================
+# FORM INLINE CLIENTE (OS)
+# ===============================
+
+class ClienteInlineForm(BaseBootstrapForm):
+    class Meta:
+        model = Cliente
+        fields = [
+            'nome',
+            'cpf_cnpj',
+            'telefone',
+            'email',
+            'endereco',
+        ]
+
+
+# ===============================
+# FORM INLINE EQUIPAMENTO (OS)
+# ===============================
+
+class EquipamentoInlineForm(BaseBootstrapForm):
+    class Meta:
+        model = Equipamento
+        fields = [
+            'cliente',
+            'tipo',
+            'marca',
+            'modelo',
+            'numero_serie',
+            'descricao',
+        ]

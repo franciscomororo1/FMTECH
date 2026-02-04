@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Impressão OS</title>
+
+    <style>
+        body { font-family: Arial; }
+        .box { margin-bottom: 20px; }
+    </style>
+</head>
+<body onload="window.print()">
+
+<h2>Ordem de Serviço {{ os.numero_os }}</h2>
+
+<div class="box">
+    <strong>Cliente:</strong>
+    {{ os.equipamento.cliente.nome }}
+</div>
+
+<div class="box">
+    <strong>Equipamento:</strong>
+    {{ os.equipamento }}
+</div>
+
+<div class="box">
+    <strong>Defeito:</strong><br>
+    {{ os.defeito_relatado }}
+</div>
+
+<div class="box">
+    <strong>Solução:</strong><br>
+    {{ os.solucao }}
+</div>
+
+<div class="box">
+    <strong>Valor:</strong>
+    R$ {{ os.valor_servico }}
+</div>
+
+</body>
+</html>

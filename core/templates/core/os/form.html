@@ -1,48 +1,107 @@
 {% extends "core/form_base.html" %}
+{% block content %}
 
-{% block form_title %}
-Ordem de Serviço
-{% endblock %}
+<h3>Abertura de Ordem de Serviço</h3>
 
-{% block form_fields %}
+<form method="post">
+    {% csrf_token %}
 
-<div class="col-md-6">
-    <label class="form-label">Equipamento</label>
-    {{ form.equipamento }}
-</div>
+    <!-- ================= CLIENTE ================= -->
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            Cliente
+        </div>
+        <div class="card-body">
 
-<div class="col-md-6">
-    <label class="form-label">Técnico</label>
-    {{ form.tecnico }}
-</div>
+            <label>Selecionar cliente</label>
+            {{ form.cliente }}
 
-<div class="col-md-4">
-    <label class="form-label">Status</label>
-    {{ form.status }}
-</div>
+            <hr>
 
-<div class="col-12">
-    <label class="form-label">Defeito relatado</label>
-    {{ form.defeito_relatado }}
-</div>
+            <h6>Novo cliente</h6>
 
-<div class="col-12">
-    <label class="form-label">Diagnóstico</label>
-    {{ form.diagnostico }}
-</div>
+            {{ form.cliente_nome.label_tag }}
+            {{ form.cliente_nome }}
 
-<div class="col-12">
-    <label class="form-label">Solução</label>
-    {{ form.solucao }}
-</div>
+            {{ form.cliente_cpf_cnpj.label_tag }}
+            {{ form.cliente_cpf_cnpj }}
 
-<div class="col-md-4">
-    <label class="form-label">Valor do serviço</label>
-    {{ form.valor_servico }}
-</div>
+            {{ form.cliente_telefone.label_tag }}
+            {{ form.cliente_telefone }}
 
-{% endblock %}
+            {{ form.cliente_email.label_tag }}
+            {{ form.cliente_email }}
 
-{% block cancel_url %}
-{% url 'os_lista' %}
+            {{ form.cliente_endereco.label_tag }}
+            {{ form.cliente_endereco }}
+
+        </div>
+    </div>
+
+    <!-- ================= EQUIPAMENTO ================= -->
+    <div class="card mb-3">
+        <div class="card-header bg-secondary text-white">
+            Equipamento
+        </div>
+        <div class="card-body">
+
+            <label>Equipamento existente</label>
+            {{ form.equipamento_existente }}
+
+            <hr>
+
+            <h6>Novo equipamento</h6>
+
+            {{ form.tipo.label_tag }}
+            {{ form.tipo }}
+
+            {{ form.marca.label_tag }}
+            {{ form.marca }}
+
+            {{ form.modelo.label_tag }}
+            {{ form.modelo }}
+
+            {{ form.numero_serie.label_tag }}
+            {{ form.numero_serie }}
+
+            {{ form.descricao.label_tag }}
+            {{ form.descricao }}
+
+        </div>
+    </div>
+
+    <!-- ================= OS ================= -->
+    <div class="card mb-3">
+        <div class="card-header bg-dark text-white">
+            Ordem de Serviço
+        </div>
+        <div class="card-body">
+
+            {{ form.tecnico.label_tag }}
+            {{ form.tecnico }}
+
+            {{ form.status.label_tag }}
+            {{ form.status }}
+
+            {{ form.defeito_relatado.label_tag }}
+            {{ form.defeito_relatado }}
+
+            {{ form.diagnostico.label_tag }}
+            {{ form.diagnostico }}
+
+            {{ form.solucao.label_tag }}
+            {{ form.solucao }}
+
+            {{ form.valor_servico.label_tag }}
+            {{ form.valor_servico }}
+
+        </div>
+    </div>
+
+    <button class="btn btn-success">
+        Salvar OS
+    </button>
+
+</form>
+
 {% endblock %}

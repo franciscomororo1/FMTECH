@@ -1,6 +1,7 @@
 {% extends "core/list_base.html" %}
 
 {% block table_header %}
+
 <tr>
     <th>Data</th>
     <th>Equipamento</th>
@@ -12,23 +13,45 @@
 
 {% block table_body %}
 {% for os in ordens %}
+
 <tr>
     <td>{{ os.data_abertura|date:"d/m/Y" }}</td>
-    <td>{{ os.equipamento }}</td>
-    <td>{{ os.tecnico }}</td>
-    <td>
-        <span class="badge bg-secondary">
-            {{ os.get_status_display }}
-        </span>
-    </td>
-    <td class="text-end">
-        <a href="{% url 'os_editar' os.id %}" class="btn btn-warning btn-sm">
-            Editar
-        </a>
-        <a href="{% url 'os_excluir' os.id %}" class="btn btn-danger btn-sm">
-            Excluir
-        </a>
-    </td>
+
+<td>{{ os.equipamento }}</td>
+
+<td>{{ os.tecnico }}</td>
+
+<td>
+    <span class="badge bg-secondary">
+        {{ os.get_status_display }}
+    </span>
+</td>
+
+<td class="text-end">
+
+    <!-- IMPRIMIR -->
+    <a href="{% url 'os_print' os.id %}"
+       target="_blank"
+       class="btn btn-info btn-sm"
+       title="Imprimir OS">
+
+        <i class="bi bi-printer"></i>
+    </a>
+
+    <!-- EDITAR -->
+    <a href="{% url 'os_editar' os.id %}"
+       class="btn btn-warning btn-sm">
+        Editar
+    </a>
+
+    <!-- EXCLUIR -->
+    <a href="{% url 'os_excluir' os.id %}"
+       class="btn btn-danger btn-sm">
+        Excluir
+    </a>
+
+</td>
+
 </tr>
 {% endfor %}
 {% endblock %}

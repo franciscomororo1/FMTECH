@@ -23,6 +23,7 @@ urlpatterns = [
     path('ordens/nova/', views.os_nova, name='os_nova'),
     path('ordens/<int:pk>/editar/', views.os_editar, name='os_editar'),
     path('ordens/<int:pk>/excluir/', views.os_excluir, name='os_excluir'),
+    path('os/<int:pk>/print/', views.os_print, name='os_print'),
 
     # RECEITAS
     path('receitas/', views.receita_lista, name='receita_lista'),
