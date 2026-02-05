@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
-from dj_database_url import parse as dburl
+from decouple import config
+from dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,11 +79,14 @@ TEMPLATES = [
 # (SQLite por enquanto)
 # ===============================
 
-default_dburl = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
-
 DATABASES = {
-	'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
+    'default': dj_database_url.parse(
+        config('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+
 
 # ===============================
 # PASSWORD VALIDATION
