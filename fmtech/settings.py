@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from dj_database_url import parse as dburl
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -77,11 +78,10 @@ TEMPLATES = [
 # (SQLite por enquanto)
 # ===============================
 
+default_dburl = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+	'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
 }
 
 # ===============================
@@ -108,8 +108,14 @@ USE_TZ = True
 # STATIC FILES
 # ===============================
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = '/static/'
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATIC_ROOT = BASE_DIR / 'static'
+
 
 STATICFILES_DIRS = [
     BASE_DIR / "core/static",
